@@ -21,6 +21,7 @@ import { FAMILIES, type Family, classifyFamily } from "@/lib/families";
 import { navigate, useRoute } from "@/lib/router";
 import type { Paper, ResultRow } from "@/lib/types";
 import { cn, fmt, fmtCompact, pdfKey } from "@/lib/utils";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
   type ColumnDef,
   type SortingState,
@@ -34,6 +35,7 @@ import {
   AlertTriangle,
   BookOpen,
   Check,
+  ChevronDown,
   Code2,
   ExternalLink,
   Filter,
@@ -54,6 +56,7 @@ const FAMILY_CHART: Record<Family, string> = {
 };
 
 const ALL_BENCHMARKS = "__all__";
+const MULTI_VALUE_SEP = "\u001f";
 
 function avatarFor(name: string): { letter: string; hue: number } {
   const trimmed = name.trim();
@@ -72,6 +75,7 @@ function parseFloatOrNull(s: string | null | undefined): number | null {
 interface LeaderRow {
   paper: Paper;
   modelName: string;
+  paperTitle: string;
   family: Family;
   baseArch: string | null;
   params: number | null;
@@ -96,14 +100,17 @@ function buildResultsIndex(results: ResultRow[]) {
   // bucket per paperId+benchmark -> best metric_value
   const benchCounts = new Map<string, number>();
   const benchModels = new Map<string, Set<string>>();
+  const evalCounts = new Map<string, number>();
   // best score per (pdf_filename, benchmark_name)
   const bestPerPaperBench = new Map<string, Map<string, number>>();
   // distinct benchmarks per pdf_filename
   const benchesPerPaper = new Map<string, Set<string>>();
+  const evalsPerPaper = new Map<string, Set<string>>();
 
   for (const r of results) {
     const b = r.benchmark_name?.trim();
     const pid = r.pdf_filename?.trim();
+    const evalStrategy = r.evaluation_strategy?.trim();
     if (!b || !pid) continue;
     if (EXCLUDED_BENCHMARKS.has(b)) continue;
     benchCounts.set(b, (benchCounts.get(b) ?? 0) + 1);
@@ -111,6 +118,11 @@ function buildResultsIndex(results: ResultRow[]) {
     benchModels.get(b)!.add(pid);
     if (!benchesPerPaper.has(pid)) benchesPerPaper.set(pid, new Set());
     benchesPerPaper.get(pid)!.add(b);
+    if (evalStrategy) {
+      evalCounts.set(evalStrategy, (evalCounts.get(evalStrategy) ?? 0) + 1);
+      if (!evalsPerPaper.has(pid)) evalsPerPaper.set(pid, new Set());
+      evalsPerPaper.get(pid)!.add(evalStrategy);
+    }
     const v = parseFloatOrNull(r.metric_value);
     if (v == null) continue;
     if (!bestPerPaperBench.has(pid)) bestPerPaperBench.set(pid, new Map());
@@ -118,7 +130,7 @@ function buildResultsIndex(results: ResultRow[]) {
     const cur = inner.get(b);
     if (cur == null || v > cur) inner.set(b, v);
   }
-  return { benchCounts, benchModels, bestPerPaperBench, benchesPerPaper };
+  return { benchCounts, benchModels, evalCounts, bestPerPaperBench, benchesPerPaper, evalsPerPaper };
 }
 
 function topBenchmarks(
@@ -163,9 +175,11 @@ function computeRows(
     }
     const family = classifyFamily(p);
     const modelName = p.model_name ?? p.title ?? p.id;
+    const paperTitle = p.title ?? p.model_name ?? p.id;
     return {
       paper: p,
       modelName,
+      paperTitle,
       family,
       baseArch: p.architecture.backbone,
       params: p.architecture.params_millions,
@@ -400,12 +414,21 @@ export function Leaderboard({ data }: { data: Dataset }) {
   const initialFamily = (params.get("family") as Family | null) ?? null;
   const initialYear = params.get("year") ?? "all";
   const initialCode = params.get("code") ?? "all";
+  const initialModel = (params.get("model") ?? "")
+    .split(MULTI_VALUE_SEP)
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const initialEvaluation = params.get("evaluation") ?? "all";
+  const initialPaper = params.get("paper") ?? "all";
   const initialQuery = params.get("q") ?? "";
 
   const [benchmark, setBenchmark] = React.useState<string>(initialBenchmark);
   const [familyFilter, setFamilyFilter] = React.useState<string>(initialFamily ?? "all");
   const [yearFilter, setYearFilter] = React.useState<string>(initialYear);
   const [codeFilter, setCodeFilter] = React.useState<string>(initialCode);
+  const [modelFilter, setModelFilter] = React.useState<string[]>(initialModel);
+  const [evaluationFilter, setEvaluationFilter] = React.useState<string>(initialEvaluation);
+  const [paperFilter, setPaperFilter] = React.useState<string>(initialPaper);
   const [query, setQuery] = React.useState<string>(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = React.useState<string>(initialQuery);
   const [sorting, setSorting] = React.useState<SortingState>([
@@ -427,10 +450,13 @@ export function Leaderboard({ data }: { data: Dataset }) {
     if (familyFilter !== "all") next.family = familyFilter;
     if (yearFilter !== "all") next.year = yearFilter;
     if (codeFilter !== "all") next.code = codeFilter;
+    if (modelFilter.length > 0) next.model = modelFilter.join(MULTI_VALUE_SEP);
+    if (evaluationFilter !== "all") next.evaluation = evaluationFilter;
+    if (paperFilter !== "all") next.paper = paperFilter;
     if (debouncedQuery) next.q = debouncedQuery;
     navigate("leaderboard", next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [benchmark, familyFilter, yearFilter, codeFilter, debouncedQuery]);
+  }, [benchmark, familyFilter, yearFilter, codeFilter, modelFilter, evaluationFilter, paperFilter, debouncedQuery]);
 
   const idx = React.useMemo(() => buildResultsIndex(data.results), [data.results]);
   const topBench = React.useMemo(() => topBenchmarks(idx.benchCounts, idx.benchModels, 10), [idx]);
@@ -447,6 +473,40 @@ export function Leaderboard({ data }: { data: Dataset }) {
     return [...s].sort((a, b) => b - a);
   }, [data.papers]);
 
+  const clearAllFilters = React.useCallback(() => {
+    setFamilyFilter("all");
+    setYearFilter("all");
+    setCodeFilter("all");
+    setModelFilter([]);
+    setBenchmark(ALL_BENCHMARKS);
+    setEvaluationFilter("all");
+    setPaperFilter("all");
+  }, []);
+
+  const benchmarkOptions = React.useMemo(() => {
+    return [...idx.benchModels.entries()]
+      .sort((a, b) => b[1].size - a[1].size || a[0].localeCompare(b[0]))
+      .map(([name]) => ({ value: name, label: name }));
+  }, [idx]);
+
+  const modelOptions = React.useMemo(() => {
+    return [...new Set(allRows.map((r) => r.modelName))]
+      .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+      .map((name) => ({ value: name, label: name }));
+  }, [allRows]);
+
+  const evaluationOptions = React.useMemo(() => {
+    return [...idx.evalCounts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([name]) => ({ value: name, label: name }));
+  }, [idx]);
+
+  const paperOptions = React.useMemo(() => {
+    return [...allRows]
+      .sort((a, b) => a.paperTitle.localeCompare(b.paperTitle, undefined, { sensitivity: "base" }))
+      .map((row) => ({ value: row.paperId, label: row.paperTitle }));
+  }, [allRows]);
+
   const filteredRows = React.useMemo(() => {
     const q = debouncedQuery.trim().toLowerCase();
     return allRows.filter((r) => {
@@ -455,10 +515,13 @@ export function Leaderboard({ data }: { data: Dataset }) {
       if (yearFilter !== "all" && String(r.year ?? "") !== yearFilter) return false;
       if (codeFilter === "yes" && !r.paper.code_available) return false;
       if (codeFilter === "no" && r.paper.code_available) return false;
+      if (modelFilter.length > 0 && !modelFilter.includes(r.modelName)) return false;
+      if (evaluationFilter !== "all" && !idx.evalsPerPaper.get(pdfKey(r.paperId))?.has(evaluationFilter)) return false;
+      if (paperFilter !== "all" && r.paperId !== paperFilter) return false;
       if (q && !r.searchBlob.includes(q)) return false;
       return true;
     });
-  }, [allRows, benchmark, familyFilter, yearFilter, codeFilter, debouncedQuery]);
+  }, [allRows, benchmark, familyFilter, yearFilter, codeFilter, modelFilter, evaluationFilter, paperFilter, debouncedQuery, idx]);
 
   const columns = React.useMemo<ColumnDef<LeaderRow>[]>(() => {
     return [
@@ -773,6 +836,45 @@ export function Leaderboard({ data }: { data: Dataset }) {
               { value: "no", label: "Code: no" },
             ]}
           />
+          <ModelMultiSelect
+            value={modelFilter}
+            onChange={setModelFilter}
+            options={modelOptions}
+            triggerClassName="min-w-[180px] max-w-[260px]"
+          />
+          <FilterSelect
+            value={benchmark}
+            onChange={setBenchmark}
+            placeholder="Benchmark"
+            options={[
+              { value: ALL_BENCHMARKS, label: "All benchmarks" },
+              ...benchmarkOptions,
+            ]}
+            triggerClassName="min-w-[190px] max-w-[260px]"
+          />
+          <FilterSelect
+            value={evaluationFilter}
+            onChange={setEvaluationFilter}
+            placeholder="Evaluation strategy"
+            options={[
+              { value: "all", label: "All evaluation strategies" },
+              ...evaluationOptions,
+            ]}
+            triggerClassName="min-w-[220px] max-w-[280px]"
+          />
+          <FilterSelect
+            value={paperFilter}
+            onChange={setPaperFilter}
+            placeholder="Paper"
+            options={[
+              { value: "all", label: "All papers" },
+              ...paperOptions,
+            ]}
+            triggerClassName="min-w-[220px] max-w-[320px]"
+          />
+          <Button type="button" variant="outline" size="sm" onClick={clearAllFilters}>
+            Clear all filters
+          </Button>
         </div>
       </div>
 
@@ -917,17 +1019,19 @@ function FilterSelect({
   placeholder,
   options,
   icon,
+  triggerClassName,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder: string;
   options: Array<{ value: string; label: string }>;
   icon?: React.ReactNode;
+  triggerClassName?: string;
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-auto min-w-[140px]">
-        <span className="inline-flex items-center gap-1.5 text-[12.5px]">
+      <SelectTrigger className={cn("w-auto min-w-[140px]", triggerClassName)}>
+        <span className="inline-flex min-w-0 items-center gap-1.5 text-[12.5px]">
           {icon}
           <SelectValue placeholder={placeholder} />
         </span>
@@ -940,5 +1044,89 @@ function FilterSelect({
         ))}
       </SelectContent>
     </Select>
+  );
+}
+
+function ModelMultiSelect({
+  value,
+  onChange,
+  options,
+  triggerClassName,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  options: Array<{ value: string; label: string }>;
+  triggerClassName?: string;
+}) {
+  const selectedCount = value.length;
+  const buttonLabel =
+    selectedCount === 0
+      ? "All models"
+      : selectedCount === 1
+        ? value[0]
+        : `${selectedCount} models selected`;
+
+  function toggleModel(model: string, checked: boolean) {
+    if (!checked) {
+      onChange(value.filter((entry) => entry !== model));
+      return;
+    }
+    onChange([...value, model]);
+  }
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "flex h-9 w-auto min-w-[140px] items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-1 text-[13px] shadow-sm",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            triggerClassName,
+          )}
+        >
+          <span className="truncate text-[12.5px]">{buttonLabel}</span>
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+        </button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="start"
+          className="relative z-50 max-h-72 min-w-32 overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-pop"
+          sideOffset={4}
+        >
+          <DropdownMenu.CheckboxItem
+            checked={selectedCount === 0}
+            className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-7 pr-2 text-[12.5px] outline-none focus:bg-muted focus:text-foreground"
+            onCheckedChange={(checked) => {
+              if (checked) onChange([]);
+            }}
+          >
+            <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+              <DropdownMenu.ItemIndicator>
+                <Check className="h-3.5 w-3.5 text-accent" />
+              </DropdownMenu.ItemIndicator>
+            </span>
+            All models
+          </DropdownMenu.CheckboxItem>
+          <DropdownMenu.Separator className="my-1 h-px bg-border" />
+          {options.map((opt) => (
+            <DropdownMenu.CheckboxItem
+              key={opt.value}
+              checked={value.includes(opt.value)}
+              className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-7 pr-2 text-[12.5px] outline-none focus:bg-muted focus:text-foreground"
+              onCheckedChange={(checked) => toggleModel(opt.value, checked === true)}
+            >
+              <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+                <DropdownMenu.ItemIndicator>
+                  <Check className="h-3.5 w-3.5 text-accent" />
+                </DropdownMenu.ItemIndicator>
+              </span>
+              {opt.label}
+            </DropdownMenu.CheckboxItem>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
