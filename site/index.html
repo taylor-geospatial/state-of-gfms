@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No One Knows the State of the Art in Geospatial Foundation Models · Taylor Geospatial</title>
+<meta name="description" content="NeurIPS 2026 position paper. A 152-paper audit of how geospatial foundation model papers evaluate and compare models, with six recommendations.">
+<meta name="theme-color" content="#F4F4EB">
+<meta property="og:type" content="website">
+<meta property="og:title" content="No One Knows the State of the Art in Geospatial Foundation Models">
+<meta property="og:description" content="A 152-paper audit of geospatial foundation models and six recommendations to make them comparable. NeurIPS 2026 Position Paper Track.">
+<meta property="og:url" content="https://research.taylorgeospatial.org/state-of-gfms/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://research.taylorgeospatial.org/state-of-gfms/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+
+<header class="bar">
+  <a class="bar-logo" href="https://taylorgeospatial.org" aria-label="Taylor Geospatial">
+    <img src="assets/tg-logo-oneline.svg" alt="Taylor Geospatial" width="226" height="24">
+  </a>
+  <nav class="bar-nav" aria-label="Sections">
+    <a class="opt" href="#findings">Findings</a>
+    <a class="opt" href="#recommendations">Recommendations</a>
+    <a class="opt" href="#data">Data</a>
+    <a href="presentation/">Video</a>
+    <a href="slides/">Slides</a>
+    <a class="pill" href="https://arxiv.org/abs/2605.12678">Paper</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker rise" style="--d:0">NeurIPS 2026 · Position Paper Track</p>
+    <h1 class="rise" style="--d:1">No One Knows the State of the Art in Geospatial Foundation Models</h1>
+
+    <ul class="authors rise" style="--d:2">
+      <li>Isaac Corley<sup>1</sup></li>
+      <li>Nils Lehmann<sup>2</sup></li>
+      <li>Caleb Robinson<sup>3</sup></li>
+      <li>Gabriel Tseng<sup>4</sup></li>
+      <li>Anthony Fuller<sup>5,6</sup></li>
+      <li>Hamed Alemohammad<sup>7</sup></li>
+      <li>Evan Shelhamer<sup>5,8</sup></li>
+      <li>Jennifer Marcus<sup>1</sup></li>
+      <li>Hannah Kerner<sup>1,9</sup></li>
+    </ul>
+    <p class="affils rise" style="--d:2">
+      <span><sup>1</sup>Taylor Geospatial</span>
+      <span><sup>2</sup>Technical University of Munich</span>
+      <span><sup>3</sup>Microsoft AI for Good Research Lab</span>
+      <span><sup>4</sup>Allen Institute for AI</span>
+      <span><sup>5</sup>Vector Institute</span>
+      <span><sup>6</sup>Carleton University</span>
+      <span><sup>7</sup>Clark University</span>
+      <span><sup>8</sup>University of British Columbia</span>
+      <span><sup>9</sup>Arizona State University</span>
+    </p>
+
+    <div class="cta rise" style="--d:3">
+      <a class="btn btn-solid" href="https://arxiv.org/abs/2605.12678">Paper <span class="mono">arXiv:2605.12678</span></a>
+      <a class="btn" href="presentation/">Video</a>
+      <a class="btn" href="slides/">Slides</a>
+      <a class="btn" href="poster/">Poster</a>
+      <a class="btn" href="#data">Dataset</a>
+      <a class="btn" href="https://github.com/taylor-geospatial/state-of-gfms">GitHub</a>
+      <a class="btn" href="#cite">Cite</a>
+    </div>
+  </div>
+
+  <div class="wrap stats" role="list">
+    <div class="stat rise" style="--d:4" role="listitem">
+      <span class="stat-n">152</span>
+      <span class="stat-l">papers audited, 2019–2025</span>
+    </div>
+    <div class="stat rise" style="--d:5" role="listitem">
+      <span class="stat-n">47</span>
+      <span class="stat-l">of 252 repeated results differ by at least 5 points between papers</span>
+    </div>
+    <div class="stat rise" style="--d:6" role="listitem">
+      <span class="stat-n">94<small>/126</small></span>
+      <span class="stat-l">papers pretrain on a set of datasets no other paper uses</span>
+    </div>
+    <div class="stat rise" style="--d:7" role="listitem">
+      <span class="stat-n">39<small>%</small></span>
+      <span class="stat-l">of papers release no model weights</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ POSITION ============ -->
+<section class="position" id="position">
+  <div class="wrap narrow reveal">
+    <p class="kicker kicker-dark">Position</p>
+    <p class="position-lead">Nobody knows the current state of the art for geospatial foundation models.</p>
+    <p>Papers in the audited corpus do not share an evaluation framework, they report different numbers for the same model on the same benchmark, and they change architecture and pretraining data together without ablations that separate the two. We think this is a coordination failure and not the fault of any one lab, and the authors of this paper have contributed to it.</p>
+  </div>
+</section>
+
+<!-- ============ FINDINGS ============ -->
+<section class="findings" id="findings">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <p class="kicker">Findings</p>
+      <h2>Five trends in the 152-paper corpus</h2>
+    </header>
+
+    <article class="trend reveal">
+      <div class="trend-body">
+        <h3><span class="mono">T1</span> Model weights are not released</h3>
+        <p>Of the 152 papers, 59 (39%) release no model weights. Twenty-six say so explicitly, and we could not find weights for the other 33. Twenty-nine of the 59 provide public code but no weights, so reusing those models requires retraining them.</p>
+      </div>
+      <div class="wbar" role="img" aria-label="Weight release across 152 papers: 93 released, 26 explicitly unreleased, 33 not found">
+        <div class="wbar-bracket" style="--l:61.2%"><span>No weights · 59/152</span></div>
+        <div class="wbar-track">
+          <span class="seg seg-yes" style="--w:93" title="Released: 93 papers (61%)"></span>
+          <span class="seg seg-no" style="--w:26" title="Explicitly unreleased: 26 papers (17%)"></span>
+          <span class="seg seg-unk" style="--w:33" title="Not found: 33 papers (22%)"></span>
+        </div>
+        <div class="wbar-labels">
+          <span style="--w:93"><i class="sw sw-yes"></i>Released <b>93</b></span>
+          <span style="--w:26"><i class="sw sw-no"></i>Explicitly not <b>26</b></span>
+          <span style="--w:33"><i class="sw sw-unk"></i>Not found <b>33</b></span>
+        </div>
+      </div>
+    </article>
+
+    <article class="trend trend-stack reveal">
+      <div class="trend-body">
+        <h3><span class="mono">T2</span> No shared core of benchmarks</h3>
+        <p>The papers evaluate on 401 distinct benchmarks in 1,046 evaluations. EuroSAT, NWPU-RESISC45, and AID are the most used, yet together they account for 10.6% of evaluations, and 50 of 143 papers (35%) use none of the ten most common benchmarks. The Gini coefficient of benchmark usage has been stable since 2023, while the number of benchmarks used by a single paper grew from 13 in 2022 to 98 in 2025.</p>
+      </div>
+      <div class="figs figs-3">
+        <figure class="fig"><a href="assets/figs/benchmark_concentration.svg" class="fig-link"><img src="assets/figs/benchmark_concentration.svg" alt="Top-10 of 401 benchmarks by paper count: EuroSAT 42, NWPU-RESISC45 36, AID 33, BigEarthNet-S2 32, UCMerced 28, Potsdam 22, OSCD 19, DIOR 17, fMoW 15, LEVIR-CD 13. Gini 0.51." loading="lazy"></a><figcaption>Ten most-used of 401 benchmarks, by paper count.</figcaption></figure>
+        <figure class="fig"><a href="assets/figs/cherry_picking.svg" class="fig-link"><img src="assets/figs/cherry_picking.svg" alt="Histogram of per-paper overlap with the top-10 benchmarks; mean 0.27, 50 of 143 papers at zero overlap." loading="lazy"></a><figcaption>Per-paper overlap with the ten most-used benchmarks.</figcaption></figure>
+        <figure class="fig"><a href="assets/figs/concentration_by_year.svg" class="fig-link"><img src="assets/figs/concentration_by_year.svg" alt="Gini coefficient of benchmark usage by publication year, stable after 2023." loading="lazy"></a><figcaption>Gini coefficient of benchmark usage by year.</figcaption></figure>
+      </div>
+    </article>
+
+    <article class="trend trend-stack reveal">
+      <div class="trend-body">
+        <h3><span class="mono">T3</span> Reported numbers disagree across papers</h3>
+        <p>We grouped the 11,488 reported results by model, benchmark, metric, evaluation protocol, and training regime. After excluding generic baselines and detection benchmarks, 252 groups are reported by at least two papers. The reported values differ by at least 5 points in 47 of them (18.7%), by at least 10 in 18, and by at least 20 in 6. For example, CROMA's mIoU on m-Cashew-Plantation is 30.1 in DOFA and 62.2 in SatDiFuser, and the papers do not give enough detail to tell whether the decoders and evaluation settings were the same. The median spread is 0.1 points and the 90th percentile is 8.3.</p>
+      </div>
+      <div class="figs figs-2">
+        <figure class="fig"><a href="assets/figs/divergence_left.svg" class="fig-link"><img src="assets/figs/divergence_left.svg" alt="Of 252 recipe tuples, 47 spread at least 5 points, 18 at least 10, and 6 at least 20." loading="lazy"></a><figcaption>Cross-paper spread within the same model, benchmark, metric, and protocol.</figcaption></figure>
+        <figure class="fig"><a href="assets/figs/divergence_right.svg" class="fig-link"><img src="assets/figs/divergence_right.svg" alt="Top-10 reported disagreements, led by GPT-4o on UCMerced (45 points) and CROMA on m-Cashew-Plantation (32 points)." loading="lazy"></a><figcaption>Ten largest reported disagreements.</figcaption></figure>
+      </div>
+      <details class="table-wrap">
+        <summary>Ten largest disagreements, with the setup detail the papers leave unspecified</summary>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Model</th><th>Benchmark</th><th>Metric / eval</th><th class="num">#</th><th class="num">Min</th><th class="num">Max</th><th>Min / max papers</th><th>Likely missing setup detail</th></tr></thead>
+            <tbody>
+              <tr><td>GPT-4o</td><td>UCMerced</td><td>Acc. / 0-shot</td><td class="num">2</td><td class="num">43.5</td><td class="num">88.8</td><td>RingMo-Agent; EarthDial</td><td>Identical prompts, API snapshot, scoring, and samples are not established.</td></tr>
+              <tr><td>CROMA</td><td>m-Cashew</td><td>mIoU / linear</td><td class="num">4</td><td class="num">30.1</td><td class="num">62.2</td><td>DOFA; SatDiFuser</td><td>Decoder details are weakly described.</td></tr>
+              <tr><td>ViT-22k</td><td>OSCD</td><td>Recall / FT</td><td class="num">2</td><td class="num">22.5</td><td class="num">52.4</td><td>GFM; SpectralGPT</td><td>GFM describes 192×192 tiles; SpectralGPT describes 128×128 crops with 50% overlap. Unclear why that would produce such a gap.</td></tr>
+              <tr><td>DOFA</td><td>m-Cashew</td><td>mIoU / linear</td><td class="num">3</td><td class="num">27.7</td><td class="num">53.9</td><td>TerraFM; SatDiFuser</td><td>Decoder details are weakly described.</td></tr>
+              <tr><td>Satlas</td><td>m-Cashew</td><td>mIoU / linear</td><td class="num">2</td><td class="num">25.1</td><td class="num">49.1</td><td>TerraFM; SatDiFuser</td><td>TerraFM reports the same Satlas score as Galileo, but which decoder produced it is unclear.</td></tr>
+              <tr><td>ViT-22k</td><td>OSCD</td><td>F1 / FT</td><td class="num">3</td><td class="num">30.7</td><td class="num">52.2</td><td>GFM; SpectralGPT</td><td>The papers do not establish that they use the same evaluation recipe.</td></tr>
+              <tr><td>CaCo</td><td>NWPU-RESISC45</td><td>Acc. / FT</td><td class="num">2</td><td class="num">68.6</td><td class="num">88.3</td><td>CtxMIM; SelectiveMAE</td><td>CtxMIM's head-fine-tuning description is ambiguous.</td></tr>
+              <tr><td>Scale-MAE</td><td>NWPU-RESISC45</td><td>Acc. / FT</td><td class="num">7</td><td class="num">78.0</td><td class="num">95.7</td><td>CtxMIM; Scale-MAE</td><td>Freezing is unclear in CtxMIM. The same score in several papers does not show each reran it.</td></tr>
+              <tr><td>GPT-4o</td><td>AID</td><td>Acc. / 0-shot</td><td class="num">2</td><td class="num">58.3</td><td class="num">74.7</td><td>RingMo-Agent; EarthDial</td><td>Identical samples, prompts, answer mapping, and API snapshot are not established.</td></tr>
+              <tr><td>ResNet-50</td><td>OSCD</td><td>Recall / FT</td><td class="num">3</td><td class="num">25.1</td><td class="num">38.9</td><td>GFM; SpectralGPT</td><td>GFM labels it ResNet-50, but its scores match a ResNet-18 run in SeCo.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </article>
+
+    <article class="trend reveal">
+      <div class="trend-body">
+        <h3><span class="mono">T4</span> Dataset bundles without a shared harness</h3>
+        <p>GEO-Bench, PANGAEA, FoMo-Bench, and PhilEO Bench provide curated datasets and splits, but each researcher still writes their own training and evaluation code, so the optimizer, learning rate, evaluation crop, and IoU averaging vary between papers that use the same dataset. The field has no counterpart to <span class="mono">lm-evaluation-harness</span>, a versioned tool that every model owner runs to produce a reported number.</p>
+      </div>
+      <div class="trend-body">
+        <h3><span class="mono">T5</span> Architecture confounded with pretraining data</h3>
+        <p>The 126 papers that name a pretraining dataset use 87 distinct datasets, and the most common, MillionAID, appears in 9 papers. Only 32 papers (25%) pretrain on the same set of datasets as any other paper, and the other 94 each use a unique set. When a paper changes both the model and the data without holding one fixed, readers cannot tell which change produced the gain.</p>
+        <p class="more"><a href="assets/figs/pretrain_data.svg">Figure: ten most-used pretraining datasets</a></p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ RECOMMENDATIONS ============ -->
+<section class="recs" id="recommendations">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <p class="kicker">Recommendations</p>
+      <h2>Six recommendations for authors, reviewers, and venues</h2>
+      <p class="sec-sub">The paper also gives a reviewer checklist (C1–C6) that maps to these.</p>
+    </header>
+    <ol class="rec-list reveal">
+      <li class="rec"><span class="rec-n">R1</span><div><h3>Release weights under a named license</h3><p>Release them by camera-ready, or state the constraint that prevents release.</p></div></li>
+      <li class="rec"><span class="rec-n">R2</span><div><h3>Report on a shared core of benchmarks</h3><p>Use core benchmarks that fit the model's modality and claimed tasks, and state the protocol.</p></div></li>
+      <li class="rec"><span class="rec-n">R3</span><div><h3>Mark each baseline as copied or rerun</h3><p>Copied rows cite the source paper and its protocol, and rerun rows give the configuration.</p></div></li>
+      <li class="rec"><span class="rec-n">R4</span><div><h3>Report seed variability</h3><p>Give mean ± std over at least three runs where affordable, and otherwise say the result is from one run.</p></div></li>
+      <li class="rec"><span class="rec-n">R5</span><div><h3>Build a shared evaluation harness</h3><p>A third party maintains one tool with versioned protocols and automated submission checks.</p></div></li>
+      <li class="rec"><span class="rec-n">R6</span><div><h3>Separate data from architecture and algorithm</h3><p>When more than one changes, include a controlled run on a public pretraining dataset.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ DATA + CITE ============ -->
+<section class="data" id="data">
+  <div class="wrap split reveal">
+    <div>
+      <p class="kicker">Data</p>
+      <h2>Dataset</h2>
+      <p>Two JSON Lines files contain the 152 paper records and the 11,488 normalized benchmark scores used in the paper. The data dictionary describes each key and how to match scores to papers.</p>
+      <div class="cta">
+        <a class="btn btn-solid" href="data/reported_numbers.jsonl" download>Results <span class="mono">6.1 MB</span></a>
+        <a class="btn" href="data/extracted_info.jsonl" download>Papers <span class="mono">0.4 MB</span></a>
+        <a class="btn" href="https://github.com/taylor-geospatial/state-of-gfms/blob/main/data/README.md">Data dictionary</a>
+      </div>
+    </div>
+    <div id="cite">
+      <div class="cite-head">
+        <p class="kicker">Cite</p>
+        <button class="copy" type="button" data-copy="#bibtex">Copy BibTeX</button>
+      </div>
+<pre class="bib" id="bibtex">@inproceedings{corley2026noone,
+  title     = {No One Knows the State of the Art in
+               Geospatial Foundation Models},
+  author    = {Corley, Isaac and Lehmann, Nils and
+               Robinson, Caleb and Tseng, Gabriel and
+               Fuller, Anthony and Alemohammad, Hamed and
+               Shelhamer, Evan and Marcus, Jennifer and
+               Kerner, Hannah},
+  booktitle = {Advances in Neural Information Processing
+               Systems (NeurIPS), Position Paper Track},
+  year      = {2026},
+  eprint    = {2605.12678},
+  archivePrefix = {arXiv}
+}</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <a href="https://taylorgeospatial.org" aria-label="Taylor Geospatial"><img src="assets/tg-logo-stacked-ivory.svg" alt="Taylor Geospatial" width="192" height="48"></a>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="https://arxiv.org/abs/2605.12678">Paper</a>
+      <a href="presentation/">Video</a>
+      <a href="slides/">Slides</a>
+      <a href="poster/">Poster</a>
+      <a href="#data">Dataset</a>
+      <a href="https://github.com/taylor-geospatial/state-of-gfms">GitHub</a>
+      <a href="mailto:isaac.corley@taylorgeospatial.org">Contact</a>
+    </nav>
+    <p class="foot-note">© 2026 Taylor Geospatial · Code MIT</p>
+  </div>
+</footer>
+
+<script src="main.js" defer></script>
+</body>
+</html>

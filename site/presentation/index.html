@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presentation · No One Knows the State of the Art in Geospatial Foundation Models</title>
+<meta name="description" content="Five-minute NeurIPS 2026 presentation of the position paper No One Knows the State of the Art in Geospatial Foundation Models.">
+<meta name="theme-color" content="#F4F4EB">
+<meta property="og:type" content="video.other">
+<meta property="og:title" content="Presentation · No One Knows the State of the Art in Geospatial Foundation Models">
+<meta property="og:description" content="Five-minute NeurIPS 2026 talk: a 152-paper audit of geospatial foundation models and six recommendations to make them comparable.">
+<meta property="og:url" content="https://research.taylorgeospatial.org/state-of-gfms/presentation/">
+<meta property="og:image" content="https://research.taylorgeospatial.org/state-of-gfms/presentation/poster.jpg">
+<meta property="og:video" content="https://research.taylorgeospatial.org/state-of-gfms/presentation/no-one-knows-sota-gfm.webm">
+<meta property="og:video:type" content="video/webm">
+<link rel="canonical" href="https://research.taylorgeospatial.org/state-of-gfms/presentation/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  .talk { padding: clamp(28px, 4vw, 48px) 0 clamp(40px, 5vw, 64px); }
+  .talk h1 { font-size: clamp(26px, 3.4vw, 40px); margin-bottom: 10px; text-wrap: balance; }
+  .talk .by { color: var(--ink-muted); font-size: 15px; margin-bottom: 22px; }
+  .talk video { display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--tg-ivory); border: 1px solid var(--rule); border-radius: 8px; }
+  .talk .cta { margin-top: 22px; }
+  .talk details { margin-top: 26px; font-size: 15px; color: var(--ink-soft); }
+  .talk summary { cursor: pointer; font-weight: 600; }
+  .talk pre { margin: 10px 0 0; padding: 12px 14px; background: var(--card); border: 1px solid var(--rule); border-radius: 6px; font: 400 13px/1.5 var(--mono); white-space: pre-wrap; word-break: break-all; }
+  /* ?embed: only the video, edge to edge, for iframes */
+  .embed { background: var(--tg-ivory); }
+  .embed .bar, .embed .foot, .embed .kicker, .embed h1, .embed .by, .embed .cta, .embed details { display: none; }
+  .embed .talk, .embed .wrap { padding: 0; max-width: none; }
+  .embed .talk video { height: 100vh; border: 0; border-radius: 0; }
+</style>
+<script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+
+<header class="bar">
+  <a class="bar-logo" href="https://taylorgeospatial.org" aria-label="Taylor Geospatial">
+    <img src="../assets/tg-logo-oneline.svg" alt="Taylor Geospatial" width="226" height="24">
+  </a>
+  <nav class="bar-nav" aria-label="Sections">
+    <a href="../">Project</a>
+    <a href="../slides/">Slides</a>
+    <a class="pill" href="https://arxiv.org/abs/2605.12678">Paper</a>
+  </nav>
+</header>
+
+<main class="talk">
+  <div class="wrap">
+    <p class="kicker">NeurIPS 2026 · Position Paper Track · 5 min talk</p>
+    <h1>No One Knows the State of the Art in Geospatial Foundation Models</h1>
+    <p class="by">Presented by Isaac Corley, with Nils Lehmann, Caleb Robinson, Gabriel Tseng, Anthony Fuller, Hamed Alemohammad, Evan Shelhamer, Jennifer Marcus and Hannah Kerner</p>
+
+    <video controls playsinline preload="metadata" poster="poster.jpg">
+      <source src="no-one-knows-sota-gfm.webm" type="video/webm">
+      Your browser can't play this video. <a href="no-one-knows-sota-gfm.webm">Download it</a> instead.
+    </video>
+
+    <div class="cta">
+      <a class="btn btn-solid" href="https://arxiv.org/abs/2605.12678">Paper <span class="mono">arXiv:2605.12678</span></a>
+      <a class="btn" href="../slides/">Click through the slides</a>
+      <a class="btn" href="../poster/">Poster</a>
+      <a class="btn" href="no-one-knows-sota-gfm.webm" download>Download <span class="mono">WebM · 14 MB</span></a>
+    </div>
+
+    <details>
+      <summary>Embed this video</summary>
+      <pre>&lt;iframe src="https://research.taylorgeospatial.org/state-of-gfms/presentation/?embed" style="width:100%;aspect-ratio:16/9;border:0" allowfullscreen&gt;&lt;/iframe&gt;</pre>
+    </details>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <a href="https://taylorgeospatial.org" aria-label="Taylor Geospatial"><img src="../assets/tg-logo-stacked-ivory.svg" alt="Taylor Geospatial" width="192" height="48"></a>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="../">Project page</a>
+      <a href="https://arxiv.org/abs/2605.12678">Paper</a>
+      <a href="../slides/">Slides</a>
+      <a href="../poster/">Poster</a>
+      <a href="https://github.com/taylor-geospatial/state-of-gfms">GitHub</a>
+    </nav>
+    <p class="foot-note">© 2026 Taylor Geospatial · Code MIT</p>
+  </div>
+</footer>
+
+</body>
+</html>

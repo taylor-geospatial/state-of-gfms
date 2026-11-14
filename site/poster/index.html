@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poster · No One Knows the State of the Art in Geospatial Foundation Models</title>
+<meta name="description" content="NeurIPS 2026 poster for the position paper No One Knows the State of the Art in Geospatial Foundation Models.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&family=Open+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="poster.css">
+</head>
+<body>
+<div class="chrome">
+  <a href="../">← Project page</a>
+  <span>Hover or tap a row in the chart</span>
+  <a href="poster.png" download>Download PNG</a>
+</div>
+<div id="stage">
+
+  <!-- LEFT: who, what, evidence -->
+  <aside class="col left">
+    <img class="logo" src="../assets/tg-logo-oneline.svg" alt="Taylor Geospatial">
+    <p class="kicker">NeurIPS 2026 · Position Paper Track</p>
+    <h1>No One Knows the State of the Art in Geospatial Foundation Models</h1>
+    <p class="authors">Isaac Corley<sup>1</sup>, Nils Lehmann<sup>2</sup>, Caleb Robinson<sup>3</sup>, Gabriel Tseng<sup>4</sup>, Anthony Fuller<sup>5,6</sup>, Hamed Alemohammad<sup>7</sup>, Evan Shelhamer<sup>5,8</sup>, Jennifer Marcus<sup>1</sup>, Hannah Kerner<sup>1,9</sup></p>
+    <p class="affils"><sup>1</sup>Taylor Geospatial <sup>2</sup>TU Munich <sup>3</sup>Microsoft AI for Good <sup>4</sup>Allen Institute for AI <sup>5</sup>Vector Institute <sup>6</sup>Carleton <sup>7</sup>Clark <sup>8</sup>UBC <sup>9</sup>Arizona State</p>
+
+    <p class="kicker sec">What we did</p>
+    <p class="body">We read <b>152 GFM papers</b> from 2019–2025 and extracted <b>11,488 reported results</b>, and tested whether results from different papers can be compared.</p>
+
+    <p class="kicker sec">What we found</p>
+    <div class="stat">
+      <span class="n">39<small>%</small></span>
+      <span class="l">of papers have no public weights, so their results cannot be reproduced.</span>
+      <div class="wbar"><i style="flex:93" class="yes" data-tip="Weights released: 93 papers"></i><i style="flex:26" class="no" data-tip="Explicitly not released: 26 papers"></i><i style="flex:33" class="unk" data-tip="Weights not found: 33 papers"></i></div>
+      <span class="legend"><i class="yes"></i>released 93 <i class="no"></i>not released 26 <i class="unk"></i>not found 33</span>
+    </div>
+    <div class="stat">
+      <span class="n">401</span>
+      <span class="l">benchmarks across 152 papers. 35% of the papers that run evaluations use none of the ten most common.</span>
+    </div>
+    <div class="stat">
+      <span class="n">94<small>/126</small></span>
+      <span class="l">papers pretrain on a dataset combination that no other paper uses, so model gains cannot be separated from data gains.</span>
+    </div>
+  </aside>
+
+  <!-- CENTER: the hook -->
+  <main class="center">
+    <p class="hook"><em>Nobody knows</em> which geospatial foundation model is best.</p>
+    <p class="sub">CROMA scores <b>30.1</b> mIoU on m-Cashew in one paper and <b>62.2</b> in another. Of the 252 results that more than one paper reports under the same protocol, <b>47</b> differ by 5 points or more.</p>
+
+    <div class="chart">
+      <div class="chart-head"><span>Lowest and highest score reported for the same experiment</span><span class="key"><i class="lo"></i>lowest <i class="hi"></i>highest</span></div>
+      <div id="rows"></div>
+      <div class="axis"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+    </div>
+    <div class="detail" id="detail"></div>
+
+    <div class="foot">
+      <img class="qr" src="qr.svg" alt="QR code for research.taylorgeospatial.org/state-of-gfms">
+      <div>
+        <p class="foot-big">Paper, data, and slides</p>
+        <p class="foot-url">research.taylorgeospatial.org/state-of-gfms</p>
+        <p class="foot-note">We have published tables like these ourselves, and we think fixing them takes shared benchmarks and tooling that no single lab can provide.</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT: what to do -->
+  <aside class="col right">
+    <p class="kicker">What we ask of every GFM paper</p>
+    <ol class="recs">
+      <li><span>R1</span><div><b>Release the weights</b> under a named license, or say what prevents it.</div></li>
+      <li><span>R2</span><div><b>Evaluate on a shared core</b> of benchmarks and state the protocol.</div></li>
+      <li><span>R3</span><div><b>Label every baseline</b> as <i class="tag">↻ rerun</i> or <i class="tag">⧉ copied</i>, with its source.</div></li>
+      <li><span>R4</span><div><b>Report seed variance</b>, or say the result is from one run.</div></li>
+      <li><span>R5</span><div><b>Build one shared harness</b> with versioned protocols that everyone runs.</div></li>
+      <li><span>R6</span><div><b>Separate data from model.</b> If both change, add one run on a public pretraining set.</div></li>
+    </ol>
+
+    <p class="kicker sec">For reviewers</p>
+    <p class="body">A paper need not satisfy all six, but ask whether the ones it skips could explain the claimed gain.</p>
+
+    <p class="kicker sec">Come argue with us</p>
+    <p class="body">We do not yet know which benchmarks belong in the shared core or who should run the harness, and we want your opinion on both.</p>
+    <p class="contact">isaac.corley@taylorgeospatial.org</p>
+  </aside>
+
+  <div id="tip"></div>
+</div>
+<script src="poster.js"></script>
+</body>
+</html>
