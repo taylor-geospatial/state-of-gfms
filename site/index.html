@@ -22,6 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
 <link rel="stylesheet" href="styles.css">
+<link rel="preload" href="assets/globe.json" as="fetch" type="application/json" crossorigin>
 <script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
@@ -44,7 +45,8 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="wrap">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
     <p class="kicker rise" style="--d:0">NeurIPS 2026 · Position Paper Track</p>
     <h1 class="rise" style="--d:1">No One Knows the State of the Art in Geospatial Foundation Models</h1>
 
@@ -70,6 +72,18 @@
       <span><sup>8</sup>University of British Columbia</span>
       <span><sup>9</sup>Arizona State University</span>
     </p>
+    </div>
+
+    <figure class="globe rise" id="globe" style="--d:3">
+      <div class="globe-stage">
+        <canvas role="img" aria-label="Globe of the institutions whose authors published the audited papers."></canvas>
+        <div class="globe-tip" hidden></div>
+      </div>
+      <figcaption>
+        <div class="globe-years"><button class="globe-play" type="button" aria-label="Play through the years"></button></div>
+        <p class="globe-caption"></p>
+      </figcaption>
+    </figure>
 
     <div class="cta rise" style="--d:3">
       <a class="btn btn-solid" href="https://arxiv.org/abs/2605.12678">Paper <span class="mono">arXiv:2605.12678</span></a>
@@ -270,5 +284,6 @@
 </footer>
 
 <script src="main.js" defer></script>
+<script src="globe.js" defer></script>
 </body>
 </html>

@@ -17,13 +17,18 @@ Project page, slides, and data for our NeurIPS 2026 position paper.
 ```
 site/                  static landing page (no build step)
   index.html, styles.css, main.js
-  assets/              TG logos + paper figures (SVG)
+  globe.js             hero globe of the papers' author institutions, by year
+  assets/              TG logos, paper figures (SVG), globe.json, og.png
   slides/index.html    self-contained NeurIPS slide deck
   presentation/        5 min talk: player page, VP9 WebM (4K), poster frame
   poster/              interactive poster + poster.png for the NeurIPS upload
 data/                  dataset + data dictionary
-scripts/check_site.py  CI check: local links, slides, dataset counts
+scripts/check_site.py  CI check: local links, slides, dataset counts, og:image
+scripts/export_poster.py     poster PNG/PDF, thumbnail, og.png
+scripts/build_globe_data.py  site/assets/globe.json
 ```
+
+The hero globe's institutions come from the sibling `satml-leaderboard` repo (same 152 papers), which resolves author affiliations through OpenAlex and geocodes them with ROR. 132 papers resolve to 186 institutions; the other 20 have no affiliations in OpenAlex. Rebuild with `uv run scripts/build_globe_data.py [path/to/institutions.json]`.
 
 ## Local preview
 
