@@ -5,7 +5,7 @@ Project page, slides, and data for our NeurIPS 2026 position paper.
 - Site: <https://research.taylorgeospatial.org/state-of-gfms/>
 - Video: <https://research.taylorgeospatial.org/state-of-gfms/presentation/> (5 min talk; add `?embed` for an iframe-ready player)
 - Slides: <https://research.taylorgeospatial.org/state-of-gfms/slides/>
-- Poster: <https://research.taylorgeospatial.org/state-of-gfms/poster/> ([PNG](site/poster/poster.png), 5120×2880)
+- Poster: <https://research.taylorgeospatial.org/state-of-gfms/poster/> ([PNG](site/poster/poster.png), 5120×2880; [print PDF](site/poster/poster-print.pdf), 140×78.75 cm)
 - Paper: [arXiv:2605.12678](https://arxiv.org/abs/2605.12678)
 
 ## Data
@@ -33,9 +33,15 @@ python3 scripts/check_site.py _site
 python3 -m http.server 8000 --directory _site
 ```
 
-## Poster PNG
+## Poster exports
 
-The web poster is fluid. Opening `poster/?export` fixes it at 5120×2880 px, the NeurIPS limit, so re-export `site/poster/poster.png` by screenshotting that URL in a 5120×2880 viewport at device scale 1.
+The web poster is fluid. Opening `poster/?export` fixes it at 5120×2880 px, the NeurIPS limit. `uv run scripts/export_poster.py` renders that URL with the local Google Chrome and writes three files to `site/poster/`:
+
+- `poster.png`: 5120×2880 virtual poster upload
+- `poster-print.pdf`: 140×78.75 cm vector PDF for printing (NeurIPS 2026 max is 140×90 cm landscape; the 16:9 poster fills the width). Send this to the printer, not the PNG, which is only ~93 ppi at that size.
+- `thumbnail.png`: 320×256 paper thumbnail, rendered from `poster/thumb.html`
+
+The script fails if any column is taller than 2880 px, since export mode clips the overflow.
 
 ## Deploy
 
