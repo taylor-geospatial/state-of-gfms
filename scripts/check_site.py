@@ -3,7 +3,8 @@
 Usage: python3 scripts/check_site.py _site
 
 Fails if a local link/asset in index.html is missing, the slides are missing,
-or the dataset no longer matches the headline numbers quoted on the page.
+the dataset no longer matches the headline numbers quoted on the page, or a
+page's og:image (the link-preview card) is missing or points at no file.
 """
 
 import json
@@ -14,7 +15,20 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 # Numbers quoted on the landing page; they come from the paper.
-EXPECTED = {"papers": 152, "results": 11488, "released": 93, "explicit_no": 26, "not_found": 33}
+EXPECTED = {
+    "papers": 152,
+    "results": 11488,
+    "released": 93,
+    "explicit_no": 26,
+    "not_found": 33,
+}
+SITE_URL = "https://research.taylorgeospatial.org/state-of-gfms/"
+PAGES = (
+    "index.html",
+    "poster/index.html",
+    "slides/index.html",
+    "presentation/index.html",
+)
 
 
 class RefCollector(HTMLParser):
@@ -54,6 +68,20 @@ def check_links(site: Path, errors: list[str]) -> None:
             errors.append(f"missing local file: {ref}")
 
 
+def check_social(site: Path, errors: list[str]) -> None:
+    for page in PAGES:
+        html = (site / page).read_text(encoding="utf-8")
+        found = re.search(r'<meta property="og:image" content="([^"]+)"', html)
+        if not found:
+            errors.append(f"{page}: no og:image")
+        elif not found[1].startswith(SITE_URL):
+            errors.append(f"{page}: og:image is not under {SITE_URL}: {found[1]}")
+        elif not (site / found[1].removeprefix(SITE_URL)).is_file():
+            errors.append(f"{page}: og:image file missing: {found[1]}")
+        if 'name="twitter:card" content="summary_large_image"' not in html:
+            errors.append(f"{page}: twitter:card is not summary_large_image")
+
+
 def read_jsonl(path: Path) -> list[dict]:
     with path.open(encoding="utf-8") as f:
         return [json.loads(line) for line in f if line.strip()]
@@ -83,6 +111,7 @@ def main() -> int:
     errors: list[str] = []
     check_links(site, errors)
     check_dataset(site, errors)
+    check_social(site, errors)
     if not (site / "slides" / "index.html").is_file():
         errors.append("missing slides/index.html")
     for name in ("index.html", "no-one-knows-sota-gfm.webm", "poster.jpg"):

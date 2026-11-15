@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Social card</title>
+<!-- Source for og.png (1200 x 630 link-preview image). Rendered by scripts/export_poster.py. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500;600&family=Open+Sans:wght@400;600;700&display=swap">
+<style>
+  :root { --brown: #3B1E1C; --ivory: #F4F4EB; --peri: #80A0D8; --lblue: #A7D0DC; --red: #FF4F2C; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; padding: 56px 72px 52px; display: flex; flex-direction: column;
+    background: radial-gradient(ellipse 60% 70% at 100% 0%, rgba(128,160,216,.24), transparent 70%), var(--brown);
+    color: var(--ivory); font-family: "Open Sans", sans-serif; -webkit-font-smoothing: antialiased; }
+  header { display: flex; justify-content: space-between; align-items: center; }
+  header img { height: 46px; }
+  .kicker { font: 600 19px/1 "Inconsolata", monospace; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lblue);
+    display: flex; align-items: center; gap: 12px; margin: 0; }
+  .kicker::before { content: ""; width: 13px; height: 13px; background: var(--peri); }
+  .hook { margin: 30px 0 0; font-size: 78px; line-height: 0.98; letter-spacing: -0.045em; font-weight: 700; }
+  .hook em { font-style: normal; color: var(--red); }
+  .chart { margin-top: auto; }
+  .head { display: flex; justify-content: space-between; font: 500 17px "Inconsolata", monospace; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--lblue); margin: 0 10px 8px; }
+  .key { display: flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; }
+  .key i { width: 14px; height: 14px; border-radius: 50%; margin-left: 14px; }
+  .row { display: grid; grid-template-columns: 330px 1fr 76px; align-items: center; height: 42px; padding: 0 10px; border-radius: 6px; }
+  .row.on { background: rgba(244,244,235,.14); }
+  .name { font-size: 23px; font-weight: 600; white-space: nowrap; }
+  .name span { font-weight: 400; color: var(--lblue); }
+  .track { position: relative; height: 100%; }
+  .track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: rgba(244,244,235,.24); }
+  .gap { position: absolute; top: 50%; height: 6px; margin-top: -3px; background: rgba(244,244,235,.5); border-radius: 3px; }
+  .dot { position: absolute; top: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 3px solid var(--brown); }
+  .lo { background: var(--ivory); } .hi { background: var(--red); }
+  .delta { font: 600 26px "Inconsolata", monospace; text-align: right; }
+</style>
+</head>
+<body>
+  <header>
+    <img src="tg-logo-stacked-ivory.svg" alt="Taylor Geospatial">
+    <p class="kicker">NeurIPS 2026 · Position Paper Track</p>
+  </header>
+  <p class="hook"><em>Nobody knows</em> which<br>geospatial foundation<br>model is best.</p>
+  <div class="chart">
+    <div class="head"><span>Lowest and highest score reported for the same experiment</span><span class="key"><i class="lo"></i>lowest <i class="hi"></i>highest</span></div>
+    <div id="rows"></div>
+  </div>
+<script>
+  // Subset of the poster chart: same model, benchmark, and protocol across papers.
+  const ROWS = [["GPT-4o", "UCMerced", 43.5, 88.8], ["CROMA", "m-Cashew", 30.1, 62.2], ["ViT-22k", "OSCD", 22.5, 52.4], ["DOFA", "m-Cashew", 27.7, 53.9]];
+  document.getElementById("rows").innerHTML = ROWS.map(([m, b, lo, hi], i) =>
+    `<div class="row${i === 1 ? " on" : ""}"><div class="name">${m} <span>on ${b}</span></div><div class="track"><i class="gap" style="left:${lo}%;width:${hi - lo}%"></i><i class="dot lo" style="left:${lo}%"></i><i class="dot hi" style="left:${hi}%"></i></div><div class="delta">Δ${Math.round(hi - lo)}</div></div>`
+  ).join("");
+</script>
+</body>
+</html>
