@@ -81,6 +81,21 @@ h1 { font-size: calc(92 * var(--u)); line-height: 1.08; letter-spacing: -0.03em;
 .export { --u: 1px; }
 .export body { width: 5120px; height: 2880px; overflow: hidden; }
 .export #stage { width: 5120px; height: 2880px; min-height: 0; overflow: hidden; }
+.print body, .print #stage { height: 3291px; }
+.print .row { height: 96px; }
+.print .detail { margin-bottom: 60px; }
+/* The side columns are 470 and 400 px shorter than the stage, so spread that between elements. */
+.print .kicker.sec { margin-top: 146px; padding-top: 78px; }
+.print .sub { margin-top: 152px; }
+.print .chart { margin-top: 186px; }
+.print .logo { margin-bottom: 112px; }
+.print h1 { margin-top: 60px; }
+.print .authors { margin-top: 74px; }
+.print .stat { margin-top: 96px; }
+.print .body { margin-top: 50px; }
+.print .recs { margin-top: 60px; }
+.print .recs li { padding: 60px 0; }
+.print .contact { margin-top: 58px; }
 .chrome { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 16px;
   background: var(--brown); font: 500 13px var(--mono); color: var(--lblue); }
 .chrome a { color: var(--ivory); text-decoration: none; }

@@ -15,7 +15,10 @@
     ["ResNet-50", "OSCD", "recall, fine-tuned", 3, 25.1, 38.9, "GFM", "SpectralGPT", "GFM's scores match a ResNet-18 run in SeCo."],
   ];
   const stage = document.getElementById("stage");
-  if (new URLSearchParams(location.search).has("export")) document.documentElement.classList.add("export");
+  // ?print is the 140 x 90 cm print layout: same width as ?export, 411 px taller.
+  const q = new URLSearchParams(location.search);
+  if (q.has("export") || q.has("print")) document.documentElement.classList.add("export");
+  if (q.has("print")) document.documentElement.classList.add("print");
 
   const rows = document.getElementById("rows");
   const detail = document.getElementById("detail");
